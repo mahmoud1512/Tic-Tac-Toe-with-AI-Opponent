@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="682.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField fx:id="name1" layoutX="275.0" layoutY="123.0" prefHeight="26.0" prefWidth="226.0" />
+      <TextField fx:id="name2" layoutX="274.0" layoutY="200.0" prefHeight="26.0" prefWidth="226.0" />
+      <ColorPicker fx:id="color1" layoutX="310.0" layoutY="149.0">
+         <value>
+            <Color />
+         </value>
+      </ColorPicker>
+      <ColorPicker fx:id="color2" layoutX="310.0" layoutY="226.0">
+         <value>
+            <Color />
+         </value>
+      </ColorPicker>
+      <Label layoutY="127.0" prefHeight="18.0" prefWidth="132.0" text="Player 1 (X) : " textFill="#662929">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutY="204.0" prefHeight="18.0" prefWidth="132.0" text="Player 2 (O) :" textFill="#842828">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label alignment="BASELINE_CENTER" layoutY="51.0" prefHeight="34.0" prefWidth="662.0" text="Please enter players names and their prefered colors" textAlignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Button fx:id="goGame" defaultButton="true" layoutX="284.0" layoutY="330.0" mnemonicParsing="false" style="-fx-background-color: lightBlue; -fx-cursor: hand;" text="Go to Game" />
+   </children>
+</AnchorPane>
