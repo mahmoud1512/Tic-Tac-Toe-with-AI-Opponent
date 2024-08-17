@@ -10,8 +10,7 @@
 
 <AnchorPane prefHeight="418.0" prefWidth="613.0" style="-fx-max-height: 500px;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.game.Game">
     <children>
-        <Label fx:id="GameStatus" prefHeight="35.0" prefWidth="600.0" text="Game Status is " />
-        <Label fx:id="CurrentPlayer" layoutY="42.0" prefHeight="35.0" prefWidth="600.0" text="Current Player" />
+        <Label fx:id="CurrentPlayer" layoutY="42.0" prefHeight="35.0" prefWidth="600.0" text="Your turn" />
         <GridPane fx:id="Grid" alignment="BASELINE_CENTER" gridLinesVisible="true" layoutX="42.0" layoutY="169.0" prefHeight="226.0" prefWidth="534.0" style="-fx-background-color: white; -fx-border-radius: 5px;;">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
