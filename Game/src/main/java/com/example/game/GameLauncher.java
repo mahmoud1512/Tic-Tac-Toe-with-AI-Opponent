@@ -10,6 +10,7 @@ import java.io.IOException;
 public class GameLauncher extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+
         FXMLLoader fxmlLoader = new FXMLLoader(GameLauncher.class.getResource("Sign-in.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 600, 500);
         stage.setTitle("Tic-Tac-Toe");
