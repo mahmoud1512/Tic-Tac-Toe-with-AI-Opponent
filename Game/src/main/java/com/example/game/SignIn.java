@@ -49,7 +49,7 @@ public class SignIn {
             // Get the controller associated with Game.fxml
             Game gameController = loader.getController();
             Player player=new Player(playerName,playerColor);
-            gameController.setHumanplayer(player);
+            gameController.setHumanPlayer(player);
             Scene gameScene = new Scene(gameRoot);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(gameScene);

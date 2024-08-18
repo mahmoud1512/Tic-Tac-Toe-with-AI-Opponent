@@ -1,33 +1,28 @@
 package com.example.game;
-
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class Game {
     private Player Humanplayer;
-    private Player AI = new Player("AI", Color.BLACK);
-
     private int turn = 0;
-    private String gameStatus = "Game ON";
     @FXML
     GridPane Grid;
     @FXML
     Label CurrentPlayer;
 
-    public void setHumanplayer(Player humanplayer) {
-        Humanplayer = humanplayer;
-    }
-
-    @FXML
     private char[][] GridProxy = {{'t', 't', 't'}, {'t', 't', 't'}, {'t', 't', 't'}};  // t is a way of saying we are playing nothing
     private boolean[][] visited;
-
+    private String gameState="Game on";
+    public void setHumanPlayer(Player humanplayer) {
+        Humanplayer = humanplayer;
+        CurrentPlayer.setText(Humanplayer.getName()+"'S turn");
+    }
     @FXML
     public void initialize() {
-        // Add event handlers to each button in the grid
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 Button button = getButtonAt(row, col);
@@ -40,7 +35,6 @@ public class Game {
             }
         }
     }
-
     private Button getButtonAt(int row, int col) {
         for (var node : Grid.getChildren()) {
             int rowI, colI;
@@ -61,33 +55,64 @@ public class Game {
     }
 
     private void handleButtonClick(Button button, int row, int col) {
-        if (turn % 2 == 0 && GridProxy[row][col] == 't') {
+        if (turn % 2 == 0 && GridProxy[row][col] == 't'&&gameState.equals("Game on")) {
             button.setText("X");
             button.setTextFill(Humanplayer.getColor());
             GridProxy[row][col] = 'X';
-            turn ++;
-            checkEnd('X',GridProxy.clone());
-            CurrentPlayer.setText("AI turn");
-            playAI();
+            turn++;
+            if (checkEnd(GridProxy)==-1) {
+                CurrentPlayer.setText(Humanplayer.getName() + " wins");
+                gameState = "Game end";
+            }
+            else if (turn==9) {
+                CurrentPlayer.setText("Tie Game");
+                gameState = "Game end";
+            }
+            else {
+                CurrentPlayer.setText("AI turn");
+                PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+                pause.setOnFinished(event -> {
+                    if (turn % 2 == 1 && gameState.equals("Game on")) {
+                        playAI();
+                        if (checkEnd(GridProxy) == 1) {
+                            CurrentPlayer.setText("AI wins");
+                            gameState = "Game end";
+                        } else if (turn != 9) {
+                            CurrentPlayer.setText(Humanplayer.getName()+"'S turn");
+                        } else {
+                            CurrentPlayer.setText("Tie Game");
+                            gameState = "Game end";
+                        }
+                    }
+                });
+                pause.play();
+            }
         }
     }
 
-    private int checkEnd(char c,char[][]grid) {
+    private int checkEnd(char[][]grid) {
         visited = new boolean[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (!visited[i][j] && grid[i][j] == c) {
-                    if(CheckWinner(c, i, j, 1, "none"))
-                    {
-                        if(c=='X')
-                            return -1;
-                        else
-                            return 1;
-                    }
+                if (!visited[i][j]) {
+                    if(grid[i][j]=='X'&&CheckWinner('X',i,j,1,"none"))
+                        return -1;
+                    else if(grid[i][j]=='O'&&CheckWinner('O',i,j,1,"none"))
+                       return 1;
                 }
             }
         }
-       return 0;
+        boolean x=true;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if(grid[i][j]=='t')
+                    x=false;
+            }
+        }
+       if(x)
+           return 0;
+       else
+           return 2;
     }
 
     private boolean CheckWinner(char c, int i, int j, int count, String dir) {
@@ -122,83 +147,63 @@ public class Game {
     }
 
     private void playAI() {
-        int bestScore=-100000000;
-        int[]move=new int[2];
+        int bestScore = Integer.MIN_VALUE;
+        int[] move = new int[2];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if(GridProxy[i][j]=='t')
-                {
-                    GridProxy[i][j]='O';
-                    int score=findMove(GridProxy.clone(),false,'O',turn);
-                    if(score>bestScore)
-                    {
-                        bestScore=score;
-                        move[0]=i;
-                        move[1]=j;
+                if (GridProxy[i][j] == 't') {
+                    GridProxy[i][j] = 'O';
+                    int score = findMove(GridProxy, false);
+                    GridProxy[i][j] = 't';
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move[0] = i;
+                        move[1] = j;
                     }
-                    GridProxy[i][j]='t';
                 }
             }
         }
-        GridProxy[move[0]][move[1]]='O';
-        Button button=getButtonAt(move[0],move[1]);
+        GridProxy[move[0]][move[1]] = 'O'; // Make the best move
+        Button button = getButtonAt(move[0], move[1]);
         button.setText("O");
         turn++;
-        CurrentPlayer.setText("Your turn");
     }
 
-    private int findMove(char[][] clone, boolean b ,char player,int turn) {
-        if(turn==9)
-        {
-            int p1=checkEnd('X',clone);
-            int p2=checkEnd('O',clone);
-            if(p1==0&&p2==0)
-                return 0;
-            else if (b) {
-                return p2;
-            }
-            else
-            {
-                return p1;
-            }
+    private int findMove(char[][] grid, boolean isMaximizing) {
+        int result = checkEnd(grid);
+        if (result != 2) { // Game is over or tied
+            return result;
         }
 
-        if(b)
-        {
-            int bestScore=-100000000;
+        if (isMaximizing) {
+            int bestScore = Integer.MIN_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    if(clone[i][j]=='t')
-                    {
-                        char[][]clone2=clone.clone();
-                        clone2[i][j]='O';
-                        int score=findMove(clone2,false,'X',turn+1);
-                        bestScore=Math.max(score,bestScore);
-
+                    if (grid[i][j] == 't') {
+                        grid[i][j] = 'O';
+                        int score = findMove(grid, false);
+                        grid[i][j] = 't';
+                        bestScore = Math.max(score, bestScore);
                     }
                 }
             }
             return bestScore;
-
-        }
-        else
-        {
-            int bestScore=100000000;
-
+        } else {
+            int bestScore = Integer.MAX_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    if(clone[i][j]=='t')
-                    {
-                        char[][]clone2=clone.clone();
-                        clone2[i][j]='X';
-                        int score=findMove(clone2,true,'O',turn+1);
-                        bestScore=Math.min(score,bestScore);
+                    if (grid[i][j] == 't') {
+                        grid[i][j] = 'X';
+                        int score = findMove(grid, true);
+                        grid[i][j] = 't';
+                        bestScore = Math.min(score, bestScore);
                     }
                 }
             }
             return bestScore;
         }
     }
+
 
 
 }
