@@ -16,11 +16,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SignIn {
-//    private Game Mygame;
-//
-//    public  void setMygame(Game mygame) {
-//        Mygame = mygame;
-//    }
 
     @FXML
     private Button goGame;
